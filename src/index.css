@@ -1,0 +1,29 @@
+@import "tailwindcss";
+
+@theme {
+  --font-serif: 'Fraunces', Georgia, serif;
+  --font-sans: 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
+  --color-graphite: #0f1013;
+  --color-graphite-surface: #17191e;
+  --color-graphite-card: #1c1e24;
+  --color-brass: #c8a46b;
+  --color-brass-light: #e6cb9d;
+  --color-brass-dark: #9e7f4c;
+}
+
+.font-serif-luxury {
+  font-family: 'Fraunces', Georgia, serif;
+}
+
+.font-sans-clean {
+  font-family: 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* Custom subtle scrollbar for horizontal gallery */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

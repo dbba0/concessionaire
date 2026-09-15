@@ -1,0 +1,6 @@
+{
+  "name": "Almadies Prestige Motors",
+  "description": "Concession automobile d'exception aux Almadies, Dakar (Sénégal). Showroom privé multimarque ultra haut de gamme : Rolls-Royce, Ferrari, Bentley, Lamborghini, Maybach, Range Rover.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
