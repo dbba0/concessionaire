@@ -1,117 +1,51 @@
-import React, { useState } from 'react';
-import { VEHICLES } from './data/vehicles';
-import { Vehicle } from './types';
+import React, { useEffect } from 'react';
+import { BrowserRouter, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { Navbar } from './components/Navbar';
-import { Hero } from './components/Hero';
-import { ShowroomGallery } from './components/ShowroomGallery';
-import { Configurator } from './components/Configurator';
-import { ClientJourney } from './components/ClientJourney';
-import { ContactSection } from './components/ContactSection';
-import { VehicleModal } from './components/VehicleModal';
-import { WhatsAppButton } from './components/WhatsAppButton';
 import { Footer } from './components/Footer';
+import { HomePage } from './pages/HomePage';
+import { ShowroomPage } from './pages/ShowroomPage';
+import { VehicleDetailPage } from './pages/VehicleDetailPage';
+import { ExperiencePage } from './pages/ExperiencePage';
+import { ContactPage } from './pages/ContactPage';
 
-export default function App() {
-  const [modalVehicle, setModalVehicle] = useState<Vehicle | null>(null);
-  const [configuratorVehicleId, setConfiguratorVehicleId] = useState<string>(VEHICLES[0].id);
-  const [contactPreselectedCar, setContactPreselectedCar] = useState<string>('');
-  const [activeCarSummaryForWhatsApp, setActiveCarSummaryForWhatsApp] = useState<string>(
-    `${VEHICLES[0].brand} ${VEHICLES[0].model}`
-  );
+// Scroll to top automatically on route changes
+const ScrollToTop: React.FC = () => {
+  const { pathname } = useLocation();
 
-  const scrollToSection = (sectionId: string) => {
-    const el = document.getElementById(sectionId);
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+  }, [pathname]);
 
-  const handleSelectVehicleForConfigurator = (vehicle: Vehicle) => {
-    setConfiguratorVehicleId(vehicle.id);
-    setActiveCarSummaryForWhatsApp(`${vehicle.brand} ${vehicle.model}`);
-    scrollToSection('configurator');
-  };
+  return null;
+};
 
-  const handleOpenContactWithCar = (carSummary: string) => {
-    setContactPreselectedCar(carSummary);
-    setActiveCarSummaryForWhatsApp(carSummary);
-    scrollToSection('contact');
-  };
-
-  const handleOpenWhatsAppWithCar = (carSummary: string) => {
-    setActiveCarSummaryForWhatsApp(carSummary);
-    const phoneNumber = '221778600000';
-    const msg = `Bonjour Almadies Prestige Motors, je souhaiterais obtenir des informations confidentielles et convenir d'une visite privée pour le véhicule suivant : ${carSummary}.`;
-    const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(msg)}`;
-    window.open(url, '_blank', 'noopener,noreferrer');
-  };
-
+export const App: React.FC = () => {
   return (
-    <div className="min-h-screen bg-[#0a0b0e] text-[#f2ede4] font-sans-clean selection:bg-[#c8a46b] selection:text-[#0a0b0e] flex flex-col">
-      {/* Top Floating Navigation */}
-      <Navbar
-        onOpenContact={(model) => {
-          if (model) setContactPreselectedCar(model);
-          scrollToSection('contact');
-        }}
-        onNavigate={scrollToSection}
-      />
+    <BrowserRouter>
+      <div className="min-h-screen bg-[#090a0d] text-[#e8e4dc] font-sans-clean antialiased selection:bg-[#c8a46b] selection:text-[#0a0b0e] flex flex-col justify-between">
+        <ScrollToTop />
 
-      <main className="flex-grow">
-        {/* 1. Hero plein écran avec photo réelle d'un véhicule phare */}
-        <Hero
-          flagshipVehicles={VEHICLES}
-          onSelectVehicleForConfigurator={handleSelectVehicleForConfigurator}
-          onOpenContact={(model) => {
-            if (model) setContactPreselectedCar(model);
-            scrollToSection('contact');
-          }}
-          onExploreGallery={() => scrollToSection('showroom')}
-        />
+        {/* Global Persistent Header */}
+        <Navbar />
 
-        {/* 3. Galerie horizontale présentant tous les 7 véhicules d'exception du showroom */}
-        <ShowroomGallery
-          vehicles={VEHICLES}
-          onSelectVehicleForModal={(vehicle) => {
-            setModalVehicle(vehicle);
-            setActiveCarSummaryForWhatsApp(`${vehicle.brand} ${vehicle.model}`);
-          }}
-          onSelectVehicleForConfigurator={handleSelectVehicleForConfigurator}
-        />
+        {/* Main Routed Content Stage */}
+        <main className="flex-grow pt-24">
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/showroom" element={<ShowroomPage />} />
+            <Route path="/showroom/:slug" element={<VehicleDetailPage />} />
+            <Route path="/experience" element={<ExperiencePage />} />
+            <Route path="/contact" element={<ContactPage />} />
+            {/* Catch-all fallback */}
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </main>
 
-        {/* 2. Configurateur interactif : modèle, teinte, fiches techniques en direct */}
-        <Configurator
-          vehicles={VEHICLES}
-          selectedVehicleId={configuratorVehicleId}
-          onOpenContactWithCar={handleOpenContactWithCar}
-          onOpenWhatsAppWithCar={handleOpenWhatsAppWithCar}
-        />
-
-        {/* 4. Parcours client en 3 étapes : consultation privée -> essai routier -> livraison */}
-        <ClientJourney onOpenBooking={() => scrollToSection('contact')} />
-
-        {/* 5. Formulaire de contact & Salon privé aux Almadies */}
-        <ContactSection
-          vehicles={VEHICLES}
-          preselectedCar={contactPreselectedCar}
-          onClearPreselectedCar={() => setContactPreselectedCar('')}
-        />
-      </main>
-
-      {/* Lightbox inspection modal */}
-      <VehicleModal
-        vehicle={modalVehicle}
-        onClose={() => setModalVehicle(null)}
-        onOpenContactWithCar={handleOpenContactWithCar}
-        onOpenWhatsAppWithCar={handleOpenWhatsAppWithCar}
-        onGoToConfigurator={handleSelectVehicleForConfigurator}
-      />
-
-      {/* 5. Bouton WhatsApp flottant connecté au numéro de la conciergerie */}
-      <WhatsAppButton activeCarSummary={activeCarSummaryForWhatsApp} />
-
-      {/* Footer */}
-      <Footer onNavigate={scrollToSection} />
-    </div>
+        {/* Global Persistent Footer */}
+        <Footer />
+      </div>
+    </BrowserRouter>
   );
-}
+};
+
+export default App;

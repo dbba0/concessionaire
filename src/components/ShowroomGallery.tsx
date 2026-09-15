@@ -115,7 +115,7 @@ export const ShowroomGallery: React.FC<ShowroomGalleryProps> = ({
                   src={vehicle.exteriorImage}
                   alt={`${vehicle.brand} ${vehicle.model}`}
                   referrerPolicy="no-referrer"
-                  className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700 brightness-[0.88] group-hover:brightness-100"
+                  className="w-full h-full object-cover object-center showroom-curated-photo group-hover:scale-105 transition-transform duration-700"
                 />
 
                 {/* Top Overlay Badges */}

@@ -2,18 +2,20 @@ import { Vehicle } from '../types';
 
 export const VEHICLES: Vehicle[] = [
   {
-    id: 'rolls-royce-cullinan',
+    id: 'rolls-royce-cullinan-black-badge',
+    slug: 'rolls-royce-cullinan-black-badge',
     brand: 'Rolls-Royce',
     model: 'Cullinan Black Badge',
     subTitle: 'Le sommet absolu du luxe tout-terrain',
     category: 'SUV Ultra-Luxe',
     year: 2024,
+    basePriceFCFA: 450000000,
     priceEstimate: '450 000 000 FCFA',
     status: 'Disponible au Showroom',
     exteriorImage: '/images/cars/cullinan_black.jpg',
     interiorImage: '/images/cars/cullinan_interior.jpg',
-    detailImage: '/images/cars/cullinan_blue.jpg',
-    rearImage: '/images/cars/cullinan_white.jpg',
+    detailImage: '/images/cars/cullinan_dashboard.jpg',
+    rearImage: '/images/cars/cullinan_blue.jpg',
     accentColor: '#95713b', // Rolls-Royce gold/brass
     colors: [
       {
@@ -33,6 +35,35 @@ export const VEHICLES: Vehicle[] = [
         code: '#1e385b',
         image: '/images/cars/cullinan_blue.jpg',
         finish: 'Métallisé',
+      },
+      {
+        name: 'Noir & Bois Précieux Bespoke',
+        code: '#2a2c31',
+        image: '/images/cars/cullinan_black.jpg',
+        finish: 'Satiné',
+      },
+    ],
+    options: [
+      {
+        id: 'cullinan-wheels',
+        name: 'Jantes Black Badge 22" forgées polies miroir',
+        description: 'Jantes monobloc taillées dans la masse avec cabochons autonivelants RR.',
+        priceFCFA: 18500000,
+        category: 'Jantes & Extérieur',
+      },
+      {
+        id: 'cullinan-starlight',
+        name: 'Ciel de pavillon étoilé Starlight filant Bespoke',
+        description: '1 344 fibres optiques tissées à la main avec simulation d’étoiles filantes.',
+        priceFCFA: 14000000,
+        category: 'Habitacle & Sellerie',
+      },
+      {
+        id: 'cullinan-suite',
+        name: 'Suite Arrière Immersive avec cave réfrigérée et flûtes',
+        description: 'Fauteuils Lounge inclinables, compartiment réfrigéré et flûtes en argent signées Goodwood.',
+        priceFCFA: 22000000,
+        category: 'Habitacle & Sellerie',
       },
     ],
     specs: {
@@ -55,37 +86,80 @@ export const VEHICLES: Vehicle[] = [
     ],
   },
   {
-    id: 'ferrari-purosangue',
+    id: 'ferrari-purosangue-v12',
+    slug: 'ferrari-purosangue-v12',
     brand: 'Ferrari',
     model: 'Purosangue V12',
     subTitle: 'Le premier quatre portes quatre places du Cheval Cabré',
     category: 'Supercar GT',
     year: 2024,
+    basePriceFCFA: 420000000,
     priceEstimate: '420 000 000 FCFA',
     status: 'Disponible au Showroom',
-    exteriorImage: '/images/cars/purosangue_red.jpg',
-    interiorImage: '/images/cars/purosangue_detail.jpg',
-    detailImage: '/images/cars/purosangue_rear.jpg',
-    rearImage: '/images/cars/purosangue_silver.jpg',
-    accentColor: '#d40000', // Ferrari Red
+    exteriorImage: '/images/cars/purosangue.jpg',
+    interiorImage: '/images/cars/purosangue4.jpg',
+    detailImage: '/images/cars/purosangue3.jpg',
+    rearImage: '/images/cars/purosangue2.jpg',
+    accentColor: '#1d3f6d', // Ferrari Blu Tour De France
     colors: [
       {
-        name: 'Rosso Corsa',
+        name: 'Blu Tour De France',
+        code: '#1d3f6d',
+        image: '/images/cars/purosangue.jpg',
+        finish: 'Métallisé',
+      },
+      {
+        name: 'Face Avant • Blu TdF',
+        code: '#12253f',
+        image: '/images/cars/purosangue1.jpg',
+        finish: 'Métallisé',
+      },
+      {
+        name: 'Poupe 3/4 • Quad Échappements',
+        code: '#0f1d30',
+        image: '/images/cars/purosangue2.jpg',
+        finish: 'Métallisé',
+      },
+      {
+        name: 'Profil & Ligne Aéro',
+        code: '#234775',
+        image: '/images/cars/purosangue-side.jpg',
+        finish: 'Métallisé',
+      },
+      {
+        name: 'Rosso Corsa Maranello',
         code: '#c4151c',
         image: '/images/cars/purosangue_red.jpg',
         finish: 'Brillant',
       },
       {
-        name: 'Grigio Titanio',
+        name: 'Grigio Titanio Satiné',
         code: '#7e8389',
         image: '/images/cars/purosangue_silver.jpg',
         finish: 'Métallisé',
       },
+    ],
+    options: [
       {
-        name: 'Nero Purosangue',
-        code: '#18191c',
-        image: '/images/cars/purosangue_rear.jpg',
-        finish: 'Métallisé',
+        id: 'purosangue-carbon-pack',
+        name: 'Pack Carbone Extérieur complet & Diffuseur F1 actif',
+        description: 'Lames aérodynamiques avant, passages de roue et diffuseur arrière en carbone sergé brut.',
+        priceFCFA: 24000000,
+        category: 'Jantes & Extérieur',
+      },
+      {
+        id: 'purosangue-seats',
+        name: 'Sièges Racing Carbone massants en cuir Poltrona Frau',
+        description: 'Coques en fibre de carbone apparente avec sellerie cousue main et 10 zones de massage.',
+        priceFCFA: 16500000,
+        category: 'Habitacle & Sellerie',
+      },
+      {
+        id: 'purosangue-lift',
+        name: 'Système Lift d’élévation hydraulique de caisse (+30 mm)',
+        description: 'Permet de franchir les déclivités et entrées d’hôtels en toute sérénité.',
+        priceFCFA: 9500000,
+        category: 'Technologie & Performance',
       },
     ],
     specs: {
@@ -106,19 +180,86 @@ export const VEHICLES: Vehicle[] = [
       'Système de suspension active FAST breveté Multimatic',
       'Double cockpit immersif avec écran passager dédié',
     ],
+    gallery: [
+      {
+        id: 'puro-ext-34',
+        title: 'Ligne 3/4 Avant — Blu Tour De France',
+        url: '/images/cars/purosangue.jpg',
+        caption: 'Allure sculpturale associant l\'aérodynamique de Maranello aux volumes athlétiques d\'un 4 portes.',
+        category: 'Extérieur',
+      },
+      {
+        id: 'puro-ext-front',
+        title: 'Proue Aérodynamique & Prises d’Air F1',
+        url: '/images/cars/purosangue1.jpg',
+        caption: 'Calandre inférieure béante alimentant les radiateurs du V12 et optiques LED effilées.',
+        category: 'Extérieur',
+      },
+      {
+        id: 'puro-ext-rear',
+        title: 'Poupe Athlétique & Quadruple Échappement Sport',
+        url: '/images/cars/purosangue2.jpg',
+        caption: 'Diffuseur arrière intégrant les quatre sorties d\'échappement sport et les feux horizontaux.',
+        category: 'Extérieur',
+      },
+      {
+        id: 'puro-detail-badge',
+        title: 'Monogramme Ferrari & Finitions Chrome',
+        url: '/images/cars/purosangue3.jpg',
+        caption: 'Lettrage légendaire poli au micron surmontant la caméra haute définition et le béquet aéro.',
+        category: 'Détails',
+      },
+      {
+        id: 'puro-int-cockpit',
+        title: 'Habitacle Cuoio & Double Cockpit',
+        url: '/images/cars/purosangue4.jpg',
+        caption: 'Architecture symétrique avec double écran immersif conducteur et passager, cuir noble Poltrona Frau.',
+        category: 'Habitacle',
+      },
+      {
+        id: 'puro-int-carplay',
+        title: 'Combiné Numérique & Apple CarPlay Intégré',
+        url: '/images/cars/purosangue5.jpg',
+        caption: 'Interface numérique ultra-réactive avec intégration smartphone sans fil et télémétrie embarquée.',
+        category: 'Habitacle',
+      },
+      {
+        id: 'puro-engine-v12',
+        title: 'V12 6.5L Atmosphérique Maranello (725 ch)',
+        url: '/images/cars/purosangue6.jpg',
+        caption: 'Le cœur battant mythique de Maranello avec ses plénums vermiculés rouge Ferrari, 0-100 km/h en 3,3 s.',
+        category: 'Moteur V12',
+      },
+      {
+        id: 'puro-ext-side',
+        title: 'Silhouette & Portes Antagonistes "Welcome Doors"',
+        url: '/images/cars/purosangue-side.jpg',
+        caption: 'Accès majestueux grâce aux portes arrière à ouverture antagoniste électrique sans montant B.',
+        category: 'Extérieur',
+      },
+      {
+        id: 'puro-int-seats',
+        title: 'Quatre Sièges Baquets en Cuir Naturel',
+        url: '/images/cars/purosangue-seats.jpg',
+        caption: 'Sellerie grand luxe en cuir naturel Cuoio avec 10 réglages électriques et zones de massage.',
+        category: 'Habitacle',
+      },
+    ],
   },
   {
-    id: 'bentley-continental-gt',
+    id: 'bentley-continental-gt-speed',
+    slug: 'bentley-continental-gt-speed',
     brand: 'Bentley',
     model: 'Continental GT Speed Mulliner',
     subTitle: 'L’élégance britannique et la force brute du Grand Tourisme',
     category: 'Supercar GT',
     year: 2024,
+    basePriceFCFA: 295000000,
     priceEstimate: '295 000 000 FCFA',
     status: 'Disponible au Showroom',
     exteriorImage: '/images/cars/bentley_speed.jpg',
     interiorImage: '/images/cars/bentley_interior.jpg',
-    detailImage: '/images/cars/bentley_grey.jpg',
+    detailImage: '/images/cars/bentley_badge.jpg',
     rearImage: '/images/cars/bentley_rear.jpg',
     accentColor: '#1d5e46', // Bentley British Green
     colors: [
@@ -137,8 +278,37 @@ export const VEHICLES: Vehicle[] = [
       {
         name: 'Onyx Black',
         code: '#111215',
-        image: '/images/cars/bentley_rear.jpg',
+        image: '/images/cars/bentley_studio.jpg',
         finish: 'Brillant',
+      },
+      {
+        name: 'Glacier White Mulliner',
+        code: '#e4e6ea',
+        image: '/images/cars/bentley_grey.jpg',
+        finish: 'Métallisé',
+      },
+    ],
+    options: [
+      {
+        id: 'bentley-rotating-display',
+        name: 'Bentley Rotating Display à 3 facettes tournantes',
+        description: 'Basculement électromécanique entre boiserie épurée, cadrans analogiques et écran tactile 12.3".',
+        priceFCFA: 9800000,
+        category: 'Technologie & Performance',
+      },
+      {
+        id: 'bentley-naim-audio',
+        name: 'Système audio d’orfèvre Naim for Bentley 2 200 W',
+        description: '18 transducteurs haute-fidélité avec exciters actifs intégrés dans les sièges avant.',
+        priceFCFA: 14500000,
+        category: 'Habitacle & Sellerie',
+      },
+      {
+        id: 'bentley-mulliner-blackline',
+        name: 'Pack Mulliner Blackline & Jantes 22" Speed diamantées',
+        description: 'Remplacement de l’intégralité des chromes extérieurs par une finition noire brillante fumée.',
+        priceFCFA: 12000000,
+        category: 'Jantes & Extérieur',
       },
     ],
     specs: {
@@ -161,18 +331,20 @@ export const VEHICLES: Vehicle[] = [
     ],
   },
   {
-    id: 'lamborghini-urus',
+    id: 'lamborghini-urus-performante',
+    slug: 'lamborghini-urus-performante',
     brand: 'Lamborghini',
     model: 'Urus Performante & SE',
     subTitle: 'Le Super SUV sans concession',
     category: 'SUV Ultra-Luxe',
     year: 2024,
+    basePriceFCFA: 330000000,
     priceEstimate: '330 000 000 FCFA',
     status: 'Disponible au Showroom',
     exteriorImage: '/images/cars/urus_yellow.jpg',
-    interiorImage: '/images/cars/urus_rear.jpg',
-    detailImage: '/images/cars/urus_se_green.jpg',
-    rearImage: '/images/cars/urus_performante_black.jpg',
+    interiorImage: '/images/cars/urus_rosso.jpg',
+    detailImage: '/images/cars/urus_wheel.jpg',
+    rearImage: '/images/cars/urus_rear.jpg',
     accentColor: '#f1b315', // Lamborghini Giallo
     colors: [
       {
@@ -188,10 +360,39 @@ export const VEHICLES: Vehicle[] = [
         finish: 'Métallisé',
       },
       {
-        name: 'Nero Noctis Carbone',
+        name: 'Nero Nemesis Carbone',
         code: '#141517',
         image: '/images/cars/urus_performante_black.jpg',
         finish: 'Satiné',
+      },
+      {
+        name: 'Rosso Efesto Métallisé',
+        code: '#911b22',
+        image: '/images/cars/urus_rosso.jpg',
+        finish: 'Métallisé',
+      },
+    ],
+    options: [
+      {
+        id: 'urus-akrapovic',
+        name: 'Ligne d’échappement Sport Akrapovič en titane allégé',
+        description: 'Sorties quadruple flux en titane brut et sonorité débridée en mode Corsa.',
+        priceFCFA: 15500000,
+        category: 'Technologie & Performance',
+      },
+      {
+        id: 'urus-wheels-23',
+        name: 'Jantes Pelope 23" forgées ultra-légères en titane',
+        description: 'Jantes usinées allégées avec écrous antivol titane noir mat et étriers jaunes.',
+        priceFCFA: 11000000,
+        category: 'Jantes & Extérieur',
+      },
+      {
+        id: 'urus-carbon-interior',
+        name: 'Pack Carbone Intérieur complet avec Alcantara Q-Citura',
+        description: 'Planche de bord, console centrale et poignées de maintien en carbone mat satiné.',
+        priceFCFA: 8500000,
+        category: 'Habitacle & Sellerie',
       },
     ],
     specs: {
@@ -214,18 +415,20 @@ export const VEHICLES: Vehicle[] = [
     ],
   },
   {
-    id: 'mercedes-maybach-gls',
+    id: 'mercedes-maybach-gls-600',
+    slug: 'mercedes-maybach-gls-600',
     brand: 'Mercedes-Maybach',
     model: 'GLS 600 4MATIC',
     subTitle: 'La première classe surélevée avec salon impérial',
     category: 'SUV Ultra-Luxe',
     year: 2024,
+    basePriceFCFA: 280000000,
     priceEstimate: '280 000 000 FCFA',
     status: 'Disponible au Showroom',
     exteriorImage: '/images/cars/maybach_black_red.jpg',
     interiorImage: '/images/cars/maybach_interior.jpg',
-    detailImage: '/images/cars/maybach_blue.jpg',
-    rearImage: '/images/cars/maybach_black_red.jpg',
+    detailImage: '/images/cars/maybach_wheel.jpg',
+    rearImage: '/images/cars/maybach_obsidian.jpg',
     accentColor: '#c5a368', // Maybach Brass/Gold
     colors: [
       {
@@ -239,6 +442,41 @@ export const VEHICLES: Vehicle[] = [
         code: '#244569',
         image: '/images/cars/maybach_blue.jpg',
         finish: 'Métallisé',
+      },
+      {
+        name: 'Noir Obsidienne Métallisé Pur',
+        code: '#121316',
+        image: '/images/cars/maybach_obsidian.jpg',
+        finish: 'Métallisé',
+      },
+      {
+        name: 'Bicolore Argent High-Tech & Bleu Nautique',
+        code: '#2a3d56',
+        image: '/images/cars/maybach_black_red.jpg',
+        finish: 'Bicolore',
+      },
+    ],
+    options: [
+      {
+        id: 'maybach-first-class',
+        name: 'Salon Arrière Première Classe avec tablettes aviation',
+        description: 'Fauteuils Executive individuels inclinables à 43.5° avec tablettes repliables et porte-gobelets tempérés.',
+        priceFCFA: 16000000,
+        category: 'Habitacle & Sellerie',
+      },
+      {
+        id: 'maybach-two-tone-paint',
+        name: 'Peinture Bicolore artisanale MANUFAKTUR lustrée à la main',
+        description: 'Séparation au filet tracé à la main selon la tradition carrossière de Stuttgart.',
+        priceFCFA: 19500000,
+        category: 'Jantes & Extérieur',
+      },
+      {
+        id: 'maybach-burmester-4d',
+        name: 'Système audio 4D Surround Burmester High-End 1 610 W',
+        description: '27 haut-parleurs et transducteurs d’ondes corporelles intégrés aux dossiers.',
+        priceFCFA: 12500000,
+        category: 'Technologie & Performance',
       },
     ],
     specs: {
@@ -261,18 +499,20 @@ export const VEHICLES: Vehicle[] = [
     ],
   },
   {
-    id: 'range-rover-sv',
+    id: 'range-rover-sv-l460',
+    slug: 'range-rover-sv-l460',
     brand: 'Range Rover',
     model: 'SV L460 Long Wheelbase',
     subTitle: 'Le sanctuaire britannique de sérénité et d’autorité',
     category: 'SUV Ultra-Luxe',
     year: 2024,
+    basePriceFCFA: 265000000,
     priceEstimate: '265 000 000 FCFA',
     status: 'Disponible au Showroom',
     exteriorImage: '/images/cars/range_rover_white.jpg',
     interiorImage: '/images/cars/range_rover_interior.jpg',
-    detailImage: '/images/cars/range_rover_gold.jpg',
-    rearImage: '/images/cars/range_rover_white.jpg',
+    detailImage: '/images/cars/range_rover_wheel_detail.jpg',
+    rearImage: '/images/cars/range_rover_gold.jpg',
     accentColor: '#a18b62', // Range Rover SV Warm Pewter
     colors: [
       {
@@ -286,6 +526,41 @@ export const VEHICLES: Vehicle[] = [
         code: '#9e7e53',
         image: '/images/cars/range_rover_gold.jpg',
         finish: 'Métallisé',
+      },
+      {
+        name: 'Belgravia Green Métallisé',
+        code: '#2e3e34',
+        image: '/images/cars/range_rover_green.jpg',
+        finish: 'Métallisé',
+      },
+      {
+        name: 'Santorini Black & Céramique',
+        code: '#17181c',
+        image: '/images/cars/range_rover_white.jpg',
+        finish: 'Brillant',
+      },
+    ],
+    options: [
+      {
+        id: 'range-sv-signature-suite',
+        name: 'SV Signature Suite 4 places avec table Club électrifiée',
+        description: 'Console centrale sur toute la longueur, table Club déployable et verrerie en cristal Dartington.',
+        priceFCFA: 21000000,
+        category: 'Habitacle & Sellerie',
+      },
+      {
+        id: 'range-sv-ceramic',
+        name: 'Commandes tactiles en céramique blanche satinée',
+        description: 'Sélecteur de vitesses et molettes de volume taillés dans une céramique pure douce au toucher.',
+        priceFCFA: 8500000,
+        category: 'Habitacle & Sellerie',
+      },
+      {
+        id: 'range-sv-wheels-23',
+        name: 'Jantes forgées 23" Style 1077 avec inserts en fibre de carbone',
+        description: 'Jantes allégées polies diamant avec inserts aérodynamiques en carbone verni.',
+        priceFCFA: 11500000,
+        category: 'Jantes & Extérieur',
       },
     ],
     specs: {
@@ -308,31 +583,68 @@ export const VEHICLES: Vehicle[] = [
     ],
   },
   {
-    id: 'porsche-gt3-rs',
+    id: 'porsche-911-gt3-rs-weissach',
+    slug: 'porsche-911-gt3-rs-weissach',
     brand: 'Porsche',
     model: '911 (992) GT3 RS Weissach',
     subTitle: 'La technologie du Mans homologuée pour la route',
     category: 'Supercar GT',
     year: 2024,
+    basePriceFCFA: 315000000,
     priceEstimate: '315 000 000 FCFA',
     status: 'Disponible au Showroom',
     exteriorImage: '/images/cars/porsche_gt3rs.jpg',
-    interiorImage: '/images/cars/porsche_weissach.jpg',
-    detailImage: '/images/cars/porsche_gt3rs.jpg',
+    interiorImage: '/images/cars/porsche_weissach_studio.jpg',
+    detailImage: '/images/cars/porsche_detail_wing.jpg',
     rearImage: '/images/cars/porsche_weissach.jpg',
     accentColor: '#d63031', // Porsche Guards Red
     colors: [
       {
         name: 'Blanc Pur & Pack Carbone Weissach',
         code: '#eaecee',
-        image: '/images/cars/porsche_gt3rs.jpg',
+        image: '/images/cars/porsche_weissach.jpg',
         finish: 'Métallisé',
       },
       {
         name: 'Gris Craie & Rouge Pyro',
         code: '#b5b7b9',
-        image: '/images/cars/porsche_weissach.jpg',
+        image: '/images/cars/porsche_weissach_studio.jpg',
         finish: 'Brillant',
+      },
+      {
+        name: 'Bleu Requin Sport',
+        code: '#0984e3',
+        image: '/images/cars/porsche_gt3rs.jpg',
+        finish: 'Satiné',
+      },
+      {
+        name: 'Pack Weissach Studio Racing',
+        code: '#d1d5db',
+        image: '/images/cars/porsche_weissach.jpg',
+        finish: 'Métallisé',
+      },
+    ],
+    options: [
+      {
+        id: 'porsche-weissach-pack',
+        name: 'Pack Weissach avec capots carbone & arceau en titane',
+        description: 'Capot avant, toit et coques de rétroviseurs en carbone visible et arceau de sécurité en titane (-22 kg).',
+        priceFCFA: 32000000,
+        category: 'Technologie & Performance',
+      },
+      {
+        id: 'porsche-magnesium-wheels',
+        name: 'Jantes forgées en magnésium allégé avec écrou central',
+        description: 'Réduction maximale des masses non suspendues (-10 kg) peintes en teinte Rouge Pyro ou Argent.',
+        priceFCFA: 18000000,
+        category: 'Jantes & Extérieur',
+      },
+      {
+        id: 'porsche-pccb',
+        name: 'Freins Carbone-Céramique Porsche Composite Brake (PCCB)',
+        description: 'Disques 410 mm en céramique renforcée de carbone et étriers fixes monoblocs 6 pistons jaunes.',
+        priceFCFA: 14500000,
+        category: 'Technologie & Performance',
       },
     ],
     specs: {
@@ -355,3 +667,17 @@ export const VEHICLES: Vehicle[] = [
     ],
   },
 ];
+
+export function getVehicleBySlug(slug: string): Vehicle | undefined {
+  if (!slug) return undefined;
+  const normalized = slug.toLowerCase().trim();
+  return (
+    VEHICLES.find((v) => v.slug.toLowerCase() === normalized) ||
+    VEHICLES.find((v) => v.id.toLowerCase() === normalized) ||
+    VEHICLES.find((v) => v.slug.replace(/-/g, '').includes(normalized.replace(/-/g, '')))
+  );
+}
+
+export function getVehicleById(id: string): Vehicle | undefined {
+  return VEHICLES.find((v) => v.id === id || v.slug === id);
+}

@@ -32,12 +32,14 @@ export const VehicleModal: React.FC<VehicleModalProps> = ({
 
   const [activeImage, setActiveImage] = useState<string>(vehicle.exteriorImage);
 
-  const imagesList = [
-    { label: 'Vue Extérieure Principale', url: vehicle.exteriorImage },
-    { label: 'Habitacle & Sellerie', url: vehicle.interiorImage },
-    ...(vehicle.detailImage ? [{ label: 'Profil / Finition', url: vehicle.detailImage }] : []),
-    ...(vehicle.rearImage ? [{ label: 'Vue Arrière / Nuance', url: vehicle.rearImage }] : []),
-  ];
+  const imagesList = vehicle.gallery && vehicle.gallery.length > 0
+    ? vehicle.gallery.map((g) => ({ label: g.title, url: g.url }))
+    : [
+        { label: 'Vue Extérieure Principale', url: vehicle.exteriorImage },
+        { label: 'Habitacle & Sellerie', url: vehicle.interiorImage },
+        ...(vehicle.detailImage ? [{ label: 'Profil / Finition', url: vehicle.detailImage }] : []),
+        ...(vehicle.rearImage ? [{ label: 'Vue Arrière / Nuance', url: vehicle.rearImage }] : []),
+      ];
 
   const carSummary = `${vehicle.brand} ${vehicle.model} (${vehicle.year})`;
 
@@ -82,7 +84,7 @@ export const VehicleModal: React.FC<VehicleModalProps> = ({
                 src={activeImage}
                 alt={`${vehicle.brand} ${vehicle.model}`}
                 referrerPolicy="no-referrer"
-                className="w-full h-full object-cover object-center transition-all duration-500"
+                className="w-full h-full object-cover object-center showroom-curated-photo transition-all duration-500"
               />
               <div className="absolute top-3 right-3 px-2 py-0.5 text-[10px] uppercase font-mono tracking-wider bg-[#0a0b0e]/80 text-[#e6cb9d] border border-[#232733] backdrop-blur-sm">
                 Photo Réelle Certifiée

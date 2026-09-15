@@ -27,3 +27,68 @@
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+/* Harmonized visual treatment for showroom photos (recadrage studio, contraste et désaturation subtile) */
+.showroom-curated-photo {
+  filter: contrast(1.04) brightness(0.97) saturate(0.95);
+}
+
+/* Paint Sweep diagonal atelier animation for color configuration */
+@keyframes paintDiagonalSweep {
+  0% {
+    clip-path: polygon(0 0, 0 0, 0 100%, 0% 100%);
+    opacity: 0.95;
+    transform: scale(0.98);
+  }
+  35% {
+    opacity: 0.85;
+  }
+  70% {
+    opacity: 0.7;
+  }
+  100% {
+    clip-path: polygon(0 0, 160% 0, 100% 160%, 0% 100%);
+    opacity: 0;
+    transform: scale(1);
+  }
+}
+
+@keyframes paintSheenLine {
+  0% {
+    transform: translate3d(-120%, -50%, 0) rotate(35deg);
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.9;
+  }
+  80% {
+    opacity: 0.6;
+  }
+  100% {
+    transform: translate3d(240%, 150%, 0) rotate(35deg);
+    opacity: 0;
+  }
+}
+
+.paint-sweep-active {
+  animation: paintDiagonalSweep 520ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.paint-sheen-active {
+  animation: paintSheenLine 520ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .paint-sweep-active {
+    animation: fadeIn 300ms ease-out forwards !important;
+    clip-path: none !important;
+  }
+  .paint-sheen-active {
+    display: none !important;
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
