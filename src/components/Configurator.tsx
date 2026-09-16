@@ -13,10 +13,51 @@ import {
   Phone,
   Info,
 } from 'lucide-react';
-import { Vehicle, ColorOption, VehicleOption } from '../types';
+import { Vehicle, ColorOption, PaintFinish, PaintShade } from '../types';
 import { VehicleComparatorModal } from './VehicleComparatorModal';
 import { VehiclePlaceholderImage } from './VehiclePlaceholderImage';
 import CarColorizer from './CarColorizer';
+
+const FINISH_ORDER: PaintFinish[] = ['brillant', 'metallise', 'mat'];
+
+const FINISH_LABELS: Record<PaintFinish, { label: string; italian: string }> = {
+  brillant: { label: 'Brillant', italian: 'Solido' },
+  metallise: { label: 'Métallisé', italian: 'Metallizzato' },
+  mat: { label: 'Mat', italian: 'Opaco' },
+};
+
+const LEGACY_FINISH: Record<ColorOption['finish'], PaintFinish> = {
+  Brillant: 'brillant',
+  Métallisé: 'metallise',
+  Satiné: 'mat',
+  Bicolore: 'brillant',
+};
+
+// Normalise les deux formats de données : `paints` (teinte × finition) ou
+// l'ancienne liste plate `colors`, où chaque couleur n'a qu'une finition.
+const getShades = (v: Vehicle): PaintShade[] =>
+  v.paints ??
+  (v.colors ?? []).map((c) => ({
+    id: c.name,
+    name: c.name,
+    variants: [{ finish: LEGACY_FINISH[c.finish], name: c.name, code: c.code }],
+  }));
+
+const isLightColor = (hex: string): boolean => {
+  const m = hex.replace('#', '');
+  const r = parseInt(m.substring(0, 2), 16);
+  const g = parseInt(m.substring(2, 4), 16);
+  const b = parseInt(m.substring(4, 6), 16);
+  return 0.299 * r + 0.587 * g + 0.114 * b > 186;
+};
+
+// Rendu de la pastille selon la finition (reflet miroir, halo diffus, ou aplat).
+const swatchSheen = (finish: PaintFinish): string | undefined =>
+  finish === 'brillant'
+    ? 'radial-gradient(circle at 30% 26%, rgba(255,255,255,0.7), rgba(255,255,255,0) 22%)'
+    : finish === 'metallise'
+    ? 'radial-gradient(circle at 35% 30%, rgba(255,255,255,0.35), rgba(255,255,255,0.06) 50%, transparent 70%)'
+    : undefined;
 
 interface ConfiguratorProps {
   vehicles?: Vehicle[];
@@ -42,6 +83,12 @@ export const Configurator: React.FC<ConfiguratorProps> = ({
 
   // BUG FIX: State 1: selectedColorIndex is strictly isolated for the exterior paint
   const [selectedColorIndex, setSelectedColorIndex] = useState<number>(0);
+
+  // Finition de peinture, axe indépendant de la teinte
+  const [selectedFinish, setSelectedFinish] = useState<PaintFinish>(() => {
+    const first = directVehicle || vehicles[0];
+    return first ? getShades(first)[0]?.variants[0]?.finish ?? 'brillant' : 'brillant';
+  });
 
   // BUG FIX: State 2: viewMode is strictly isolated for the camera angle / tab
   const [viewMode, setViewMode] = useState<'exterior' | 'interior' | 'detail'>('exterior');
@@ -70,6 +117,7 @@ export const Configurator: React.FC<ConfiguratorProps> = ({
       if (idx !== -1 && idx !== currentCarIndex) {
         setCurrentCarIndex(idx);
         setSelectedColorIndex(0);
+        setSelectedFinish(getShades(vehicleList[idx])[0]?.variants[0]?.finish ?? 'brillant');
         setSelectedOptionIds([]);
         setViewMode('exterior');
       }
@@ -99,7 +147,21 @@ export const Configurator: React.FC<ConfiguratorProps> = ({
     };
   }, [car.maskImage, car.slug]);
 
-  const activeColor = car.colors[selectedColorIndex] || car.colors[0];
+  const shades = getShades(car);
+  const hasFinishSelector = !!car.paints;
+  const availableFinishes = FINISH_ORDER.filter((f) =>
+    shades.some((s) => s.variants.some((v) => v.finish === f))
+  );
+  const isShadeAvailable = (shade: PaintShade) =>
+    !hasFinishSelector || shade.variants.some((v) => v.finish === selectedFinish);
+  const variantFor = (shade: PaintShade) =>
+    shade.variants.find((v) => v.finish === selectedFinish) || shade.variants[0];
+
+  const activeShade = shades[selectedColorIndex] || shades[0];
+  const activeColor = variantFor(activeShade);
+  const activeFinishLabel = hasFinishSelector
+    ? FINISH_LABELS[activeColor.finish].label
+    : car.colors?.[selectedColorIndex]?.finish ?? '';
 
   // Dynamic price calculation
   const selectedOptionsList = car.options.filter((opt) =>
@@ -122,6 +184,7 @@ export const Configurator: React.FC<ConfiguratorProps> = ({
     if (index === currentCarIndex) return;
     setCurrentCarIndex(index);
     setSelectedColorIndex(0);
+    setSelectedFinish(getShades(vehicleList[index])[0]?.variants[0]?.finish ?? 'brillant');
     setSelectedOptionIds([]);
     // Do NOT reset viewMode forcibly if user is comparing interiors, or keep it graceful
     setViewMode('exterior');
@@ -130,23 +193,43 @@ export const Configurator: React.FC<ConfiguratorProps> = ({
   // CRITICAL BUG FIX & PAINT ANIMATION:
   // Selecting a color ONLY updates selectedColorIndex and triggers the diagonal paint sweep.
   // It NEVER touches or mutates viewMode (the active tab remains unchanged).
-  const handleColorChange = (index: number) => {
-    if (index === selectedColorIndex) return;
-
+  const triggerPaintTransition = (code: string) => {
     // If user selects a paint color from another tab (interior or detail), switch smoothly to exterior
     if (viewMode !== 'exterior') {
       setViewMode('exterior');
     }
 
-    const newColor = car.colors[index];
-    setSelectedColorIndex(index);
-    setPaintColorCode(newColor.code);
+    setPaintColorCode(code);
     setIsPainting(true);
     setPaintKey((prev) => prev + 1);
 
     setTimeout(() => {
       setIsPainting(false);
     }, 560);
+  };
+
+  const handleColorChange = (index: number) => {
+    const shade = shades[index];
+    if (index === selectedColorIndex || !shade || !isShadeAvailable(shade)) return;
+
+    setSelectedColorIndex(index);
+    triggerPaintTransition(variantFor(shade).code);
+  };
+
+  // Changer de finition garde la teinte si elle existe dans cette finition,
+  // sinon bascule sur la première teinte disponible.
+  const handleFinishChange = (finish: PaintFinish) => {
+    if (finish === selectedFinish) return;
+
+    const hasFinish = (s: PaintShade) => s.variants.some((v) => v.finish === finish);
+    const index = hasFinish(shades[selectedColorIndex])
+      ? selectedColorIndex
+      : shades.findIndex(hasFinish);
+    if (index === -1) return;
+
+    setSelectedFinish(finish);
+    setSelectedColorIndex(index);
+    triggerPaintTransition(shades[index].variants.find((v) => v.finish === finish)!.code);
   };
 
   const toggleOption = (optionId: string) => {
@@ -162,7 +245,7 @@ export const Configurator: React.FC<ConfiguratorProps> = ({
       ? ` | Options : ${selectedOptionsList.map((o) => o.name).join(', ')}`
       : ' (Équipement de série)';
 
-  const configurationSummary = `${car.brand} ${car.model} (${car.year}) - Teinte ${activeColor.name} [${activeColor.finish}]${optionsText} - Total : ${formatPrice(calculatedTotalPriceFCFA)}`;
+  const configurationSummary = `${car.brand} ${car.model} (${car.year}) - Teinte ${activeColor.name} [${activeFinishLabel}]${optionsText} - Total : ${formatPrice(calculatedTotalPriceFCFA)}`;
 
   const handleContactClick = () => {
     if (onOpenContactWithCar) {
@@ -318,6 +401,7 @@ export const Configurator: React.FC<ConfiguratorProps> = ({
                     imageSrc={car.exteriorImage}
                     maskSrc={realMaskSrc}
                     color={activeColor.code}
+                    finish={hasFinishSelector ? activeColor.finish : undefined}
                     className="w-full h-full object-cover"
                   />
 
@@ -327,14 +411,30 @@ export const Configurator: React.FC<ConfiguratorProps> = ({
                       key={paintKey}
                       className="absolute inset-0 pointer-events-none z-20 overflow-hidden"
                     >
-                      {/* Specular sheen beam traveling diagonally */}
+                      {/* Specular sheen beam traveling diagonally — quasi invisible en mat */}
                       <div
                         className="absolute w-[40%] h-[200%] top-[-50%] left-[-20%] paint-sheen-active pointer-events-none"
-                        style={{
-                          background:
-                            'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.45) 50%, transparent 100%)',
-                          filter: 'blur(8px)',
-                        }}
+                        style={
+                          hasFinishSelector && activeColor.finish === 'mat'
+                            ? {
+                                background:
+                                  'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.06) 50%, transparent 100%)',
+                                filter: 'blur(24px)',
+                              }
+                            : hasFinishSelector && activeColor.finish === 'metallise'
+                            ? {
+                                // Paillettes : halo large et diffus
+                                background:
+                                  'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.18) 30%, rgba(255,255,255,0.38) 50%, rgba(255,255,255,0.18) 70%, transparent 100%)',
+                                filter: 'blur(12px)',
+                              }
+                            : {
+                                // Vernis miroir : rayon fin et franc
+                                background:
+                                  'linear-gradient(90deg, transparent 0%, transparent 38%, rgba(255,255,255,0.6) 50%, transparent 62%, transparent 100%)',
+                                filter: 'blur(4px)',
+                              }
+                        }
                       />
 
                       {/* Discrete atelier toast during color spray */}
@@ -343,7 +443,10 @@ export const Configurator: React.FC<ConfiguratorProps> = ({
                           className="w-2 h-2 rounded-full animate-ping"
                           style={{ backgroundColor: paintColorCode }}
                         />
-                        <span>Atelier Teinte : {activeColor.name}</span>
+                        <span>
+                          Atelier Teinte : {activeColor.name}
+                          {hasFinishSelector && ` • ${activeFinishLabel}`}
+                        </span>
                       </div>
                     </div>
                   )}
@@ -362,51 +465,111 @@ export const Configurator: React.FC<ConfiguratorProps> = ({
               )}
             </div>
 
-            {/* Color Swatch Selector */}
-            <div className="pt-5 mt-4 border-t border-[#20232c] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <div className="space-y-1">
-                <span className="text-[10px] uppercase tracking-[0.2em] font-sans-clean text-[#787265] block">
-                  Teinte de Carrosserie Officielle (Atelier Peinture)
-                </span>
-                <div className="flex items-center gap-2 flex-wrap">
-                  <span className="text-xs text-[#a39b8c] font-sans-clean">
-                    Sélectionnée :
+            {/* Paint Finish + Color Swatch Selector */}
+            <div className="pt-5 mt-4 border-t border-[#20232c] space-y-5">
+              {/* Type de peinture : choisi avant la teinte */}
+              {hasFinishSelector && (
+                <div className="space-y-2">
+                  <span className="text-[10px] uppercase tracking-[0.2em] font-sans-clean text-[#787265] block">
+                    Type de peinture
                   </span>
-                  <span className="font-serif-luxury text-sm text-[#f0ebe3]">
-                    {activeColor.name}
-                  </span>
-                  <span className="text-[10px] px-2 py-0.5 bg-[#1b1e26] text-[#c8a46b] border border-[#2b2f3b] rounded-xs font-mono uppercase tracking-wider">
-                    {activeColor.finish}
-                  </span>
-                </div>
-              </div>
-
-              {/* Color swatches */}
-              <div className="flex items-center gap-3">
-                {car.colors.map((c, cIdx) => (
-                  <button
-                    key={c.name}
-                    id={`color-swatch-${cIdx}`}
-                    onClick={() => handleColorChange(cIdx)}
-                    title={`${c.name} (${c.finish})`}
-                    className={`relative w-9 h-9 rounded-full transition-all duration-300 cursor-pointer flex items-center justify-center ${
-                      selectedColorIndex === cIdx
-                        ? 'scale-115 ring-2 ring-[#c8a46b] ring-offset-2 ring-offset-[#13151b]'
-                        : 'opacity-80 hover:opacity-100 hover:scale-105'
-                    }`}
-                    style={{ backgroundColor: c.code }}
+                  <div
+                    role="radiogroup"
+                    aria-label="Type de peinture"
+                    className="grid grid-cols-3 bg-[#0a0b0e]/95 border border-[#2a2e3b] p-1"
                   >
-                    {selectedColorIndex === cIdx && (
-                      <CheckCircle2
-                        className={`w-4 h-4 ${
-                          c.code === '#f0f2f5' || c.code === '#eae6de' || c.code === '#eaecee'
-                            ? 'text-[#0f1013]'
-                            : 'text-white'
+                    {availableFinishes.map((f) => (
+                      <button
+                        key={f}
+                        id={`paint-finish-${f}`}
+                        role="radio"
+                        aria-checked={selectedFinish === f}
+                        onClick={() => handleFinishChange(f)}
+                        className={`px-2 py-2 text-center transition-colors cursor-pointer ${
+                          selectedFinish === f
+                            ? 'bg-[#c8a46b] text-[#0f1013]'
+                            : 'text-[#9c9587] hover:text-white'
                         }`}
-                      />
-                    )}
-                  </button>
-                ))}
+                      >
+                        <span className="block text-[11px] uppercase tracking-wider font-sans-clean font-semibold">
+                          {FINISH_LABELS[f].label}
+                        </span>
+                        <span
+                          className={`block text-[10px] italic font-serif-luxury ${
+                            selectedFinish === f ? 'text-[#0f1013]/70' : 'text-[#6f695d]'
+                          }`}
+                        >
+                          {FINISH_LABELS[f].italian}
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div className="space-y-1">
+                  <span className="text-[10px] uppercase tracking-[0.2em] font-sans-clean text-[#787265] block">
+                    Teinte de Carrosserie Officielle (Atelier Peinture)
+                  </span>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="text-xs text-[#a39b8c] font-sans-clean">
+                      Sélectionnée :
+                    </span>
+                    <span className="font-serif-luxury text-sm text-[#f0ebe3]">
+                      {activeColor.name}
+                    </span>
+                    <span className="text-[10px] px-2 py-0.5 bg-[#1b1e26] text-[#c8a46b] border border-[#2b2f3b] rounded-xs font-mono uppercase tracking-wider">
+                      {activeFinishLabel}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Color swatches — grisées si la teinte n'existe pas dans la finition choisie */}
+                <div className="flex items-center gap-3 flex-wrap">
+                  {shades.map((shade, cIdx) => {
+                    const available = isShadeAvailable(shade);
+                    const variant = variantFor(shade);
+                    const isSelected = selectedColorIndex === cIdx;
+                    return (
+                      <button
+                        key={shade.id}
+                        id={`color-swatch-${cIdx}`}
+                        onClick={() => handleColorChange(cIdx)}
+                        disabled={!available}
+                        aria-label={
+                          available
+                            ? `${variant.name} (${hasFinishSelector ? FINISH_LABELS[variant.finish].label : car.colors?.[cIdx]?.finish})`
+                            : `${shade.name} — non proposé en ${FINISH_LABELS[selectedFinish].label}`
+                        }
+                        title={
+                          available
+                            ? variant.name
+                            : `${shade.name} — non proposé en ${FINISH_LABELS[selectedFinish].label}`
+                        }
+                        className={`relative w-9 h-9 rounded-full transition-all duration-300 flex items-center justify-center ${
+                          !available
+                            ? 'opacity-20 cursor-not-allowed'
+                            : isSelected
+                            ? 'scale-115 ring-2 ring-[#c8a46b] ring-offset-2 ring-offset-[#13151b] cursor-pointer'
+                            : 'opacity-80 hover:opacity-100 hover:scale-105 cursor-pointer'
+                        }`}
+                        style={{
+                          backgroundColor: variant.code,
+                          backgroundImage: hasFinishSelector ? swatchSheen(variant.finish) : undefined,
+                        }}
+                      >
+                        {isSelected && available && (
+                          <CheckCircle2
+                            className={`w-4 h-4 ${
+                              isLightColor(variant.code) ? 'text-[#0f1013]' : 'text-white'
+                            }`}
+                          />
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
             </div>
           </div>

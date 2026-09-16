@@ -102,48 +102,69 @@ export const VEHICLES: Vehicle[] = [
     basePriceFCFA: 420000000,
     priceEstimate: '420 000 000 FCFA',
     status: 'Disponible au Showroom',
-    exteriorImage: '/public/images/vehicles/ferrari-purosangue-v12/exterieur.jpg',
-    maskImage: '/public/images/masks/ferrari-purosangue-v12-mask.png',
+    exteriorImage: '/images/vehicles/ferrari-purosangue-v12/detail-2.jpg',
+    // ?v= : a incrementer a chaque retouche du masque, sinon les onglets
+    // deja ouverts gardent l'ancienne image en cache memoire.
+    maskImage: '/images/masks/ferrari-purosangue-v12-mask.png?v=5',
     interiorImage: '/images/cars/purosangue4.jpg',
     detailImage: '/images/cars/purosangue3.jpg',
     rearImage: '/images/cars/purosangue2.jpg',
     accentColor: '#1d3f6d', // Ferrari Blu Tour De France
-    colors: [
+    // Teinte × finition : chaque teinte est proposée dans les 3 finitions.
+    paints: [
       {
+        id: 'blu-tour-de-france',
         name: 'Blu Tour De France',
-        code: '#1d3f6d',
-        image: '/public/images/vehicles/ferrari-purosangue-v12/exterieur.jpg',
-        finish: 'Métallisé',
+        variants: [
+          { finish: 'brillant', name: 'Blu Tour De France Solido', code: '#1f3d68' },
+          { finish: 'metallise', name: 'Blu Tour De France', code: '#1d3f6d' },
+          { finish: 'mat', name: 'Blu Tour De France Opaco', code: '#233c5c' },
+        ],
       },
       {
-        name: 'Rosso Corsa Maranello',
-        code: '#c4151c',
-        image: '/public/images/vehicles/ferrari-purosangue-v12/exterieur.jpg',
-        finish: 'Brillant',
+        id: 'rosso-corsa',
+        name: 'Rosso Corsa',
+        variants: [
+          { finish: 'brillant', name: 'Rosso Corsa', code: '#c4151c' },
+          { finish: 'metallise', name: 'Rosso Corsa Metallizzato', code: '#b01419' },
+          { finish: 'mat', name: 'Rosso Corsa Opaco', code: '#a8161b' },
+        ],
       },
       {
+        id: 'giallo-modena',
         name: 'Giallo Modena',
-        code: '#e2a818',
-        image: '/public/images/vehicles/ferrari-purosangue-v12/exterieur.jpg',
-        finish: 'Brillant',
+        variants: [
+          { finish: 'brillant', name: 'Giallo Modena', code: '#e2a818' },
+          { finish: 'metallise', name: 'Giallo Modena Triplo Strato', code: '#e6b020' },
+          { finish: 'mat', name: 'Giallo Modena Opaco', code: '#d49f1c' },
+        ],
       },
       {
-        name: 'Grigio Titanio Satiné',
-        code: '#7e8389',
-        image: '/public/images/vehicles/ferrari-purosangue-v12/exterieur.jpg',
-        finish: 'Métallisé',
+        id: 'grigio-titanio',
+        name: 'Grigio Titanio',
+        variants: [
+          { finish: 'brillant', name: 'Grigio Titanio Solido', code: '#80858b' },
+          { finish: 'metallise', name: 'Grigio Titanio Metallizzato', code: '#7e8389' },
+          { finish: 'mat', name: 'Grigio Titanio Opaco', code: '#767a7f' },
+        ],
       },
       {
-        name: 'Nero Daytona Métallisé',
-        code: '#111215',
-        image: '/public/images/vehicles/ferrari-purosangue-v12/exterieur.jpg',
-        finish: 'Métallisé',
+        id: 'nero-daytona',
+        name: 'Nero Daytona',
+        variants: [
+          { finish: 'brillant', name: 'Nero', code: '#0d0d0f' },
+          { finish: 'metallise', name: 'Nero Daytona', code: '#111215' },
+          { finish: 'mat', name: 'Nero Opaco', code: '#151517' },
+        ],
       },
       {
-        name: 'Bianco Avus Pur',
-        code: '#eceef1',
-        image: '/public/images/vehicles/ferrari-purosangue-v12/exterieur.jpg',
-        finish: 'Brillant',
+        id: 'bianco-avus',
+        name: 'Bianco Avus',
+        variants: [
+          { finish: 'brillant', name: 'Bianco Avus', code: '#eceef1' },
+          { finish: 'metallise', name: 'Bianco Cervino Tristrato', code: '#e8e6df' },
+          { finish: 'mat', name: 'Bianco Avus Opaco', code: '#e2e3e4' },
+        ],
       },
     ],
     options: [
@@ -191,7 +212,7 @@ export const VEHICLES: Vehicle[] = [
       {
         id: 'puro-ext-34',
         title: 'Ligne 3/4 Avant — Blu Tour De France',
-        url: '/public/images/vehicles/ferrari-purosangue-v12/exterieur.jpg',
+        url: '/images/vehicles/ferrari-purosangue-v12/detail-2.jpg',
         caption: 'Allure sculpturale associant l\'aérodynamique de Maranello aux volumes athlétiques d\'un 4 portes.',
         category: 'Extérieur',
       },
