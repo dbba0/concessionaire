@@ -1,8 +1,8 @@
 export interface ColorOption {
   name: string;
   code: string; // hex for visual swatch
-  image: string; // real image URL
   finish: 'Métallisé' | 'Brillant' | 'Satiné' | 'Bicolore';
+  image?: string; // exterior reference or fallback
 }
 
 export interface VehicleOption {
@@ -44,6 +44,7 @@ export interface Vehicle {
   priceEstimate: string; // e.g. "450 000 000 FCFA"
   status: 'Disponible au Showroom' | 'En transit maritime' | 'Sur allocation exclusive';
   exteriorImage: string;
+  maskImage?: string; // Optional manual mask path (e.g. /images/masks/<slug>-mask.png)
   interiorImage: string;
   detailImage: string;
   rearImage?: string;

@@ -16,6 +16,7 @@ import {
 import { Vehicle, ColorOption, VehicleOption } from '../types';
 import { VehicleComparatorModal } from './VehicleComparatorModal';
 import { VehiclePlaceholderImage } from './VehiclePlaceholderImage';
+import CarColorizer from './CarColorizer';
 
 interface ConfiguratorProps {
   vehicles?: Vehicle[];
@@ -54,6 +55,9 @@ export const Configurator: React.FC<ConfiguratorProps> = ({
   const [paintColorCode, setPaintColorCode] = useState<string>('#c8a46b');
   const [paintKey, setPaintKey] = useState<number>(0);
 
+  // Real mask availability check: strictly pass undefined if no actual mask file exists on the project
+  const [realMaskSrc, setRealMaskSrc] = useState<string | undefined>(undefined);
+
   // Synchronize if directVehicle is passed
   useEffect(() => {
     if (directVehicle) {
@@ -74,6 +78,26 @@ export const Configurator: React.FC<ConfiguratorProps> = ({
 
   const car = directVehicle || vehicleList[currentCarIndex] || vehicleList[0];
   if (!car) return null;
+
+  // Probes whether a real mask PNG file actually exists in /public/images/masks/<slug>-mask.png
+  // If not found (or error), strictly sets realMaskSrc to undefined so CarColorizer leaves the photo completely untouched.
+  useEffect(() => {
+    let isMounted = true;
+    const candidatePath = car.maskImage || `/images/masks/${car.slug}-mask.png`;
+
+    const probe = new Image();
+    probe.onload = () => {
+      if (isMounted) setRealMaskSrc(candidatePath);
+    };
+    probe.onerror = () => {
+      if (isMounted) setRealMaskSrc(undefined);
+    };
+    probe.src = candidatePath;
+
+    return () => {
+      isMounted = false;
+    };
+  }, [car.maskImage, car.slug]);
 
   const activeColor = car.colors[selectedColorIndex] || car.colors[0];
 
@@ -108,6 +132,11 @@ export const Configurator: React.FC<ConfiguratorProps> = ({
   // It NEVER touches or mutates viewMode (the active tab remains unchanged).
   const handleColorChange = (index: number) => {
     if (index === selectedColorIndex) return;
+
+    // If user selects a paint color from another tab (interior or detail), switch smoothly to exterior
+    if (viewMode !== 'exterior') {
+      setViewMode('exterior');
+    }
 
     const newColor = car.colors[index];
     setSelectedColorIndex(index);
@@ -162,13 +191,13 @@ export const Configurator: React.FC<ConfiguratorProps> = ({
     setTimeout(() => setShareCopied(false), 2200);
   };
 
-  // Expected image path based on viewMode and selectedColorIndex
+  // Expected image path based on viewMode (strictly single exterior photo, recolored by CarColorizer)
   const currentExpectedPath =
     viewMode === 'interior'
       ? car.interiorImage
       : viewMode === 'detail'
       ? car.detailImage
-      : activeColor.image;
+      : car.exteriorImage;
 
   const currentViewLabel =
     viewMode === 'interior'
@@ -281,53 +310,55 @@ export const Configurator: React.FC<ConfiguratorProps> = ({
               </div>
             </div>
 
-            {/* Vehicle Photograph / Placeholder Stage */}
+            {/* Vehicle Photograph / Stage */}
             <div className="relative aspect-[16/10] sm:aspect-[16/9] w-full overflow-hidden bg-[#090a0d] mt-4 flex items-center justify-center">
-              <VehiclePlaceholderImage
-                key={`${currentExpectedPath}-${viewMode}`}
-                expectedPath={currentExpectedPath}
-                alt={`${car.brand} ${car.model} - ${currentViewLabel}`}
-                viewLabel={currentViewLabel}
-                vehicleBrand={car.brand}
-                vehicleModel={car.model}
-                accentColor={car.accentColor}
-                aspectRatio="16/9"
-              />
-
-              {/* PAINT SWEEP ANIMATION OVERLAY */}
-              {isPainting && (
-                <div
-                  key={paintKey}
-                  className="absolute inset-0 pointer-events-none z-30 overflow-hidden"
-                >
-                  {/* Diagonal sweep mask with selected color tone */}
-                  <div
-                    className="absolute inset-0 paint-sweep-active"
-                    style={{
-                      background: `linear-gradient(135deg, ${paintColorCode}cc 0%, ${paintColorCode}88 45%, #0f1013ee 100%)`,
-                      boxShadow: `inset 0 0 60px ${paintColorCode}66`,
-                    }}
+              {viewMode === 'exterior' ? (
+                <div className="relative w-full h-full">
+                  <CarColorizer
+                    imageSrc={car.exteriorImage}
+                    maskSrc={realMaskSrc}
+                    color={activeColor.code}
+                    className="w-full h-full object-cover"
                   />
 
-                  {/* Specular sheen beam traveling diagonally */}
-                  <div
-                    className="absolute w-[40%] h-[200%] top-[-50%] left-[-20%] paint-sheen-active pointer-events-none"
-                    style={{
-                      background:
-                        'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.4) 50%, transparent 100%)',
-                      filter: 'blur(8px)',
-                    }}
-                  />
+                  {/* PAINT SHEEN ANIMATION OVERLAY (specular light reflection without tinting the photo background) */}
+                  {isPainting && (
+                    <div
+                      key={paintKey}
+                      className="absolute inset-0 pointer-events-none z-20 overflow-hidden"
+                    >
+                      {/* Specular sheen beam traveling diagonally */}
+                      <div
+                        className="absolute w-[40%] h-[200%] top-[-50%] left-[-20%] paint-sheen-active pointer-events-none"
+                        style={{
+                          background:
+                            'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.45) 50%, transparent 100%)',
+                          filter: 'blur(8px)',
+                        }}
+                      />
 
-                  {/* Discrete atelier toast during color spray */}
-                  <div className="absolute bottom-4 right-4 z-40 px-3 py-1.5 rounded bg-[#090b0e]/90 border border-[#c8a46b]/40 backdrop-blur-md flex items-center gap-2 text-[10px] uppercase font-sans-clean tracking-wider text-[#e6cb9d]">
-                    <span
-                      className="w-2 h-2 rounded-full animate-ping"
-                      style={{ backgroundColor: paintColorCode }}
-                    />
-                    <span>Atelier Teinte : {activeColor.name}</span>
-                  </div>
+                      {/* Discrete atelier toast during color spray */}
+                      <div className="absolute bottom-4 right-4 z-30 px-3 py-1.5 rounded bg-[#090b0e]/90 border border-[#c8a46b]/40 backdrop-blur-md flex items-center gap-2 text-[10px] uppercase font-sans-clean tracking-wider text-[#e6cb9d]">
+                        <span
+                          className="w-2 h-2 rounded-full animate-ping"
+                          style={{ backgroundColor: paintColorCode }}
+                        />
+                        <span>Atelier Teinte : {activeColor.name}</span>
+                      </div>
+                    </div>
+                  )}
                 </div>
+              ) : (
+                <VehiclePlaceholderImage
+                  key={`${currentExpectedPath}-${viewMode}`}
+                  expectedPath={currentExpectedPath}
+                  alt={`${car.brand} ${car.model} - ${currentViewLabel}`}
+                  viewLabel={currentViewLabel}
+                  vehicleBrand={car.brand}
+                  vehicleModel={car.model}
+                  accentColor={car.accentColor}
+                  aspectRatio="16/9"
+                />
               )}
             </div>
 

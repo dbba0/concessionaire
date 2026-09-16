@@ -108,8 +108,43 @@ export const VehicleDetailPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Hero Title & Identity */}
-      <div className="space-y-4">
+      {/* 1. VISUAL CONFIGURATOR & CARCOLORIZER (En haut de page, immédiatement après le header) */}
+      <div className="space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-[#212533] pb-4">
+          <div>
+            <div className="inline-flex items-center gap-2 text-xs font-sans-clean tracking-[0.25em] uppercase text-[#c8a46b] mb-1">
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>Atelier de Teinte & Configurateur Visuel</span>
+            </div>
+            <h1 className="font-serif-luxury text-2xl sm:text-3xl lg:text-4xl text-[#f4efe5]">
+              {vehicle.brand} {vehicle.model}
+            </h1>
+          </div>
+          <div className="text-left sm:text-right">
+            <span className="text-[10px] text-[#7d786d] uppercase tracking-wider font-sans-clean block">
+              Prix Showroom indicatif
+            </span>
+            <span className="font-serif-luxury text-xl sm:text-2xl text-[#f0ece4]">
+              {vehicle.priceEstimate}
+            </span>
+          </div>
+        </div>
+
+        {/* Configurator Component specifically bound to this vehicle */}
+        <Configurator
+          vehicle={vehicle}
+          showModelSelector={false}
+          onOpenContactWithCar={handleOpenContactWithCar}
+          onOpenWhatsAppWithCar={handleOpenWhatsAppWithCar}
+        />
+      </div>
+
+      {/* 2. HIGH DEFINITION PHOTO GALLERY */}
+      <VehiclePhotoGallery vehicle={vehicle} />
+
+      {/* 3. TOUT LE TEXTE EN DESSOUS : Présentation, Fiche Technique & Équipements */}
+      {/* Description & Identité Détaillée */}
+      <div className="space-y-6 pt-6 border-t border-[#212533]">
         <div className="flex items-center gap-3 flex-wrap">
           <span className="px-3 py-1 bg-[#161822] text-[#c8a46b] border border-[#2a2f3f] text-xs font-mono uppercase tracking-wider">
             {vehicle.brand} • {vehicle.category}
@@ -123,28 +158,17 @@ export const VehicleDetailPage: React.FC = () => {
           </span>
         </div>
 
-        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
-          <div>
-            <h1 className="font-serif-luxury text-3xl sm:text-4xl md:text-5xl text-[#f4efe5]">
-              {vehicle.brand} {vehicle.model}
-            </h1>
-            <p className="font-sans-clean text-sm sm:text-base text-[#9e9788] mt-2 max-w-3xl">
-              {vehicle.description}
-            </p>
-          </div>
-
-          <div className="text-left lg:text-right flex-shrink-0">
-            <span className="text-xs text-[#7d786d] uppercase tracking-wider font-sans-clean block">
-              Prix de base Showroom
-            </span>
-            <span className="font-serif-luxury text-2xl sm:text-3xl text-[#f0ece4]">
-              {vehicle.priceEstimate}
-            </span>
-          </div>
+        <div className="space-y-3">
+          <h2 className="font-serif-luxury text-2xl sm:text-3xl text-[#f4efe5]">
+            Présentation & Histoire du Modèle
+          </h2>
+          <p className="font-sans-clean text-sm sm:text-base text-[#9e9788] max-w-4xl leading-relaxed">
+            {vehicle.description}
+          </p>
         </div>
       </div>
 
-      {/* Complete Technical Specifications Sheet */}
+      {/* Fiche Technique Complète & Homologation */}
       <div className="space-y-6">
         <div className="border-b border-[#212634] pb-3 flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -224,33 +248,6 @@ export const VehicleDetailPage: React.FC = () => {
             ))}
           </div>
         </div>
-      </div>
-
-      {/* High Definition Photo Gallery */}
-      <VehiclePhotoGallery vehicle={vehicle} />
-
-      {/* Embedded Atelier Configurateur (Colors with Paint animation + Options) */}
-      <div className="space-y-6 pt-4 border-t border-[#212533]">
-        <div className="space-y-1">
-          <div className="inline-flex items-center gap-2 text-xs font-sans-clean tracking-[0.25em] uppercase text-[#c8a46b]">
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>Atelier Personnalisation Dédié</span>
-          </div>
-          <h2 className="font-serif-luxury text-2xl sm:text-3xl text-[#f4efe5]">
-            Configurez Votre {vehicle.brand} {vehicle.model}
-          </h2>
-          <p className="font-sans-clean text-xs text-[#8c8577]">
-            Sélectionnez la teinte officielle constructeur et vos options exclusives pour obtenir un devis instantané.
-          </p>
-        </div>
-
-        {/* Configurator Component specifically bound to this vehicle */}
-        <Configurator
-          vehicle={vehicle}
-          showModelSelector={false}
-          onOpenContactWithCar={handleOpenContactWithCar}
-          onOpenWhatsAppWithCar={handleOpenWhatsAppWithCar}
-        />
       </div>
 
       {/* Private Salon & Concierge Protocol */}
